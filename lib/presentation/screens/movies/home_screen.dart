@@ -35,76 +35,91 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     super.initState();
 
     ref.read(nowPLayingMoviesProvider.notifier).loadNextPage();
+    ref.read(popularMoviesProvider.notifier).loadNextPage();
+    ref.read(topRatedMoviesProvider.notifier).loadNextPage();
+    ref.read(upComingMoviesProvider.notifier).loadNextPage();
   }
 
   @override
   Widget build(BuildContext context) {
 
+    final initialLoading = ref.watch(initialLoadingProvider);
+    //if(initialLoading) return const FullScreenLoader();
+
     final nowPlayingMovies = ref.watch(nowPLayingMoviesProvider);
     final moviesSlideshow = ref.watch(moviesSlideshowProvider);
+    final popularMovies= ref.watch(popularMoviesProvider);
+    final upComing= ref.watch(upComingMoviesProvider);
+    final topRatedMovies= ref.watch(topRatedMoviesProvider);
 
-    return CustomScrollView(
-      slivers: [
+   
 
-        const SliverAppBar(
-          floating: true,
-          flexibleSpace: FlexibleSpaceBar(
-            title:  CustomAppBar(),
+
+    return Visibility(
+      visible: !initialLoading,
+      child: CustomScrollView(
+        slivers: [
+      
+          const SliverAppBar(
+            floating: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title:  CustomAppBar(),
+            ),
           ),
-        ),
-
-        SliverList(
-          delegate:SliverChildBuilderDelegate(
-            (context, index){
-              return 
-
-                    Column(
-        children: [
-          MovieSlidesshow(movies:moviesSlideshow),
-          MovieHorizontalListview (
-            movies:nowPlayingMovies,
-            title: 'En Cines',
-            subTitle: 'Lunes 20',
-            loadNextPage: (){
-              ref.read(nowPLayingMoviesProvider.notifier).loadNextPage();
-            },
-            ),
       
+          SliverList(
+            delegate:SliverChildBuilderDelegate(
+              (context, index){
+                return 
+      
+            Column(
+          children: [
+            MovieSlidesshow(movies:moviesSlideshow),
             MovieHorizontalListview (
-            movies:nowPlayingMovies,
-            title: 'Proximamente',
-            loadNextPage: (){
-              ref.read(nowPLayingMoviesProvider.notifier).loadNextPage();
-            },
-            ),
+              movies:nowPlayingMovies,
+              title: 'En Cines',
+              subTitle: 'Lunes 20',
+              loadNextPage: (){
+                ref.read(nowPLayingMoviesProvider.notifier).loadNextPage();
+              },
+              ),
+        
+              MovieHorizontalListview (
+              movies:upComing,
+              title: 'Proximamente',
+              loadNextPage: (){
+                ref.read(upComingMoviesProvider.notifier).loadNextPage();
+              },
+              ),
+        
+              MovieHorizontalListview (
+              movies:popularMovies,
+              title: 'Populares',
+              loadNextPage: (){
+                ref.read(popularMoviesProvider.notifier).loadNextPage();
+              },
+              ),
+        
+              MovieHorizontalListview (
+              movies:topRatedMovies,
+              title: 'Mejor Calificadas',
+              loadNextPage: (){
+                ref.read(topRatedMoviesProvider.notifier).loadNextPage();
+              },
+              ),
+             const SizedBox(height: 20,)  
+          ],
+        
+        );
+              },
+              childCount: 1,
+              ))
+        ]
       
-            MovieHorizontalListview (
-            movies:nowPlayingMovies,
-            title: 'Populares',
-            loadNextPage: (){
-              ref.read(nowPLayingMoviesProvider.notifier).loadNextPage();
-            },
-            ),
+        
+        
       
-            MovieHorizontalListview (
-            movies:nowPlayingMovies,
-            title: 'Mejor Calificadas',
-            loadNextPage: (){
-              ref.read(nowPLayingMoviesProvider.notifier).loadNextPage();
-            },
-            ),
-           const SizedBox(height: 20,)  
-        ],
-      
-      );
-            },
-            childCount: 1,
-            ))
-      ]
-
-      
-      
-
+      ),
     );
   }
 }
