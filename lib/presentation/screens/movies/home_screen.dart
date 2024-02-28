@@ -1,6 +1,9 @@
-import 'package:cinema/presentation/providers/movies/movies_providers.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:cinema/presentation/widgets/widgets.dart';
+import 'package:cinema/presentation/providers/providers.dart';
 
 
 class HomeScreen extends StatelessWidget {
@@ -13,6 +16,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: _HomeView(),
+      bottomNavigationBar: CustomBottomNavigator(),
       );
   }
 }
@@ -37,14 +41,70 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   Widget build(BuildContext context) {
 
     final nowPlayingMovies = ref.watch(nowPLayingMoviesProvider);
-    return ListView.builder(
-      itemCount: nowPlayingMovies.length,
-      itemBuilder:(context, index) {
-        final movie = nowPlayingMovies[index];
-        return ListTile(
-          title: Text( movie.title),
-        );
+    final moviesSlideshow = ref.watch(moviesSlideshowProvider);
 
-      });
+    return CustomScrollView(
+      slivers: [
+
+        const SliverAppBar(
+          floating: true,
+          flexibleSpace: FlexibleSpaceBar(
+            title:  CustomAppBar(),
+          ),
+        ),
+
+        SliverList(
+          delegate:SliverChildBuilderDelegate(
+            (context, index){
+              return 
+
+                    Column(
+        children: [
+          MovieSlidesshow(movies:moviesSlideshow),
+          MovieHorizontalListview (
+            movies:nowPlayingMovies,
+            title: 'En Cines',
+            subTitle: 'Lunes 20',
+            loadNextPage: (){
+              ref.read(nowPLayingMoviesProvider.notifier).loadNextPage();
+            },
+            ),
+      
+            MovieHorizontalListview (
+            movies:nowPlayingMovies,
+            title: 'Proximamente',
+            loadNextPage: (){
+              ref.read(nowPLayingMoviesProvider.notifier).loadNextPage();
+            },
+            ),
+      
+            MovieHorizontalListview (
+            movies:nowPlayingMovies,
+            title: 'Populares',
+            loadNextPage: (){
+              ref.read(nowPLayingMoviesProvider.notifier).loadNextPage();
+            },
+            ),
+      
+            MovieHorizontalListview (
+            movies:nowPlayingMovies,
+            title: 'Mejor Calificadas',
+            loadNextPage: (){
+              ref.read(nowPLayingMoviesProvider.notifier).loadNextPage();
+            },
+            ),
+           const SizedBox(height: 20,)  
+        ],
+      
+      );
+            },
+            childCount: 1,
+            ))
+      ]
+
+      
+      
+
+    );
   }
 }
