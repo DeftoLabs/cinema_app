@@ -18,8 +18,7 @@ class MovieMapper {
       popularity: moviedb.popularity,
       posterPath: (moviedb.posterPath != '') ?
       'https://image.tmdb.org/t/p/w500${ moviedb.posterPath}' 
-      : 'no-poster' ,
-      releaseDate: moviedb.releaseDate,
+      : 'https://www.joblo.com/wp-content/uploads/2008/09/movie-poster-missing-2.jpg' ,
       title: moviedb.title,
       video: moviedb.video,
       voteAverage: moviedb.voteAverage,
