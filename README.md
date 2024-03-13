@@ -4,6 +4,7 @@
 
 1. Copy .env.template and rename to .env
 2. Change the variable (The Movie DB)
+3. Change entity. run the command "flutter pub run build_runner build"
 
 
 A new Flutter project.
