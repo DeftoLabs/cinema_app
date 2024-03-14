@@ -5,6 +5,7 @@ import 'package:cinema/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+
 class MovieScreen extends ConsumerStatefulWidget {
 
   static const name = 'movie-screen';
@@ -164,7 +165,14 @@ class _ActorsByMovie extends ConsumerWidget {
   }
 }
 
-class _CustomSliverAppBar extends StatelessWidget {
+final isFavoriteProvider = FutureProvider.family.autoDispose((ref, int movieId){
+
+  final localStorageRepository = ref.watch(localStorageRepositoryProvider);
+  return localStorageRepository.isMovieFavorite(movieId);
+
+});
+
+class _CustomSliverAppBar extends ConsumerWidget {
 
   final Movie movie;
 
@@ -173,9 +181,11 @@ class _CustomSliverAppBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext contex, WidgetRef ref) {
 
-    final size = MediaQuery.of(context).size;
+    final isFavoriteFuture = ref.watch(isFavoriteProvider(movie.id));
+
+    final size = MediaQuery.of(contex).size;
 
     return SliverAppBar(
       backgroundColor: Colors.black,
@@ -183,8 +193,22 @@ class _CustomSliverAppBar extends StatelessWidget {
       foregroundColor: Colors.white,
       actions: [
         IconButton(
-          onPressed: (){}, 
-          icon:const Icon(Icons.favorite_border))
+          onPressed: () async {
+            ref.read(localStorageRepositoryProvider)
+            .toggleFavorite(movie);
+
+            ref.invalidate(isFavoriteProvider(movie.id));
+          }, 
+
+          icon: isFavoriteFuture.when(
+            loading: ()=> const CircularProgressIndicator(strokeWidth: 2),  
+            data: (isFavorite) => isFavorite 
+            ? const Icon( Icons.favorite_rounded, color: Colors.red)
+            : const Icon (Icons.favorite_border),
+            error: (_, __) => throw UnimplementedError() , 
+          ),
+        
+          )
       ],
       flexibleSpace: FlexibleSpaceBar(
         //titlePadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
