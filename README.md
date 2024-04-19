@@ -9,6 +9,11 @@
 
 A new Flutter project.
 
+# Prod
+Change app name
+
+flutter pub run change_app_package_name:main com.danieldefaria.cinema
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
